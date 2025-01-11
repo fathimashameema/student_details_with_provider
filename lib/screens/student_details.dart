@@ -16,7 +16,12 @@ class StudentDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> values = [age, batch, phoneNo, email];
+    List<dynamic> values = [
+      age,
+      batch,
+      phoneNo,
+      email,
+    ];
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -52,15 +57,21 @@ class StudentDetails extends StatelessWidget {
                       children: [
                         ListView.builder(
                           shrinkWrap: true,
-                          itemCount: 4,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: values.length,
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: EdgeInsets.only(bottom: 10),
                               child: Row(
                                 children: [
-                                  Text(
-                                    values[index].toString(),
-                                    style: TextStyle(fontSize: 18),
+                                  Expanded(
+                                    child: Text(
+                                      maxLines: 2,
+                                      // softWrap: true,
+                                      overflow: TextOverflow.ellipsis,
+                                      values[index].toString(),
+                                      style: TextStyle(fontSize: 18),
+                                    ),
                                   ),
                                 ],
                               ),

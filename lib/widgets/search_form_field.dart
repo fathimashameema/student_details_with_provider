@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchFormField extends StatelessWidget {
-  const CustomSearchFormField({super.key});
+  final ValueChanged<String> onSearch;
+
+  const CustomSearchFormField({super.key, required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +14,7 @@ class CustomSearchFormField extends StatelessWidget {
         right: 20,
       ),
       child: CupertinoSearchTextField(
+        onChanged: onSearch,
         style: const TextStyle(
           color: Colors.white,
         ),

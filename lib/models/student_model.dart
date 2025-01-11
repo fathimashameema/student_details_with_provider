@@ -24,10 +24,14 @@ class StudentModel {
   @HiveField(5)
   Uint8List? image;
 
+  @HiveField(6)
+  int? id;
+
   StudentModel(
       {required this.age,
       required this.batch,
       required this.name,
       required this.email,
-      required this.phoneNo});
+      required this.phoneNo,
+      this.id});
 }
