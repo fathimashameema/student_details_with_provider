@@ -23,9 +23,6 @@ class AddStudent extends StatelessWidget {
     final studentProvider = Provider.of<StudentProvider>(context);
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-    
-
-
     Future<void> pickImage() async {
       final returnImage =
           await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -51,11 +48,22 @@ class AddStudent extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 80,
                   backgroundColor: Colors.grey,
-                  backgroundImage: studentProvider.selectedImage != null
-                      ? FileImage(File(studentProvider.selectedImage!.path))
-                      : const AssetImage(
-                              'assets/images/avatar-3814049_1280.webp')
-                          as ImageProvider,
+                  // backgroundImage: studentProvider.selectedImage != null
+                  //     ? FileImage(File(studentProvider.selectedImage!.path))
+                  //     : const AssetImage(
+                  //             'assets/images/avatar-3814049_1280.webp')
+                  //         as ImageProvider,
+                  child: ClipOval(
+                    child: studentProvider.selectedImage != null
+                        ? Image.file(
+                            File(studentProvider.selectedImage!.path),
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            'assets/images/avatar-3814049_1280.webp',
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
               ),
               const SizedBox(height: 30),

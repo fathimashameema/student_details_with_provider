@@ -64,13 +64,21 @@ class EditStudent extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 80,
                   backgroundColor: Colors.grey,
-                  backgroundImage: studentProvider.selectedImage != null
-                      ? FileImage(studentProvider.selectedImage!)
-                      : (profile != null
-                          ? MemoryImage(profile!)
-                          : const AssetImage(
-                                  'assets/images/avatar-3814049_1280.webp')
-                              as ImageProvider),
+                  // backgroundImage: studentProvider.selectedImage != null
+                  //     ? FileImage(studentProvider.selectedImage!)
+                  //     : (profile != null
+                  //         ? MemoryImage(profile!)
+                  //         : const AssetImage(
+                  //                 'assets/images/avatar-3814049_1280.webp')
+                  //             as ImageProvider),
+                  child: ClipOval(
+                    child: studentProvider.selectedImage != null
+                        ? Image.file(studentProvider.selectedImage!)
+                        : (profile != null
+                            ? Image.memory(profile!)
+                            : Image.asset(
+                                'assets/images/avatar-3814049_1280.webp')),
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
