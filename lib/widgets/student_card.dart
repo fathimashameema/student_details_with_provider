@@ -18,6 +18,7 @@ class StudentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final studentProvider =
         Provider.of<StudentProvider>(context, listen: false);
+    final student = studentProvider.students[index];
 
     return Padding(
       padding: const EdgeInsets.all(15.0),
@@ -46,7 +47,13 @@ class StudentCard extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (ctx) => EditStudent(),
+                      builder: (ctx) => EditStudent(
+                          name: student.name,
+                          age: student.age,
+                          email: student.email,
+                          number: student.phoneNo,
+                          batch: student.batch,
+                          index: index),
                     ),
                   );
                 },

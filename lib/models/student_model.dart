@@ -22,7 +22,7 @@ class StudentModel {
   String batch;
 
   @HiveField(5)
-  Uint8List? image;
+  String? profileImagePath;
 
   @HiveField(6)
   int? id;
@@ -33,5 +33,6 @@ class StudentModel {
       required this.name,
       required this.email,
       required this.phoneNo,
-      this.id});
+      this.id,
+      String? profileImagePath});
 }

@@ -4,18 +4,32 @@ import 'package:provider/provider.dart';
 import 'package:student_details/functions/student_provider.dart';
 import 'package:student_details/models/batch.dart';
 import 'package:student_details/models/student_model.dart';
+import 'package:student_details/widgets/custom_alert_dialogue.dart';
 import 'package:student_details/widgets/custom_text_form_field.dart';
 
 class EditStudent extends StatelessWidget {
-  const EditStudent({super.key});
+  final int index;
+  final String name;
+  final int age;
+  final String email;
+  final int number;
+  final String batch;
+  const EditStudent(
+      {super.key,
+      required this.name,
+      required this.age,
+      required this.email,
+      required this.number,
+      required this.batch,
+      required this.index});
 
   @override
   Widget build(BuildContext context) {
-    final nameController = TextEditingController();
-    final ageController = TextEditingController();
-    final batchController = SingleSelectController<Batch>(batches[0]);
-    final numberController = TextEditingController();
-    final emailController = TextEditingController();
+    final nameController = TextEditingController(text: name);
+    final ageController = TextEditingController(text: age.toString());
+    final batchController = SingleSelectController<String>(batch);
+    final numberController = TextEditingController(text: number.toString());
+    final emailController = TextEditingController(text: email);
     final studentProvider =
         Provider.of<StudentProvider>(context, listen: false);
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -102,26 +116,64 @@ class EditStudent extends StatelessWidget {
                     Colors.grey.withOpacity(0.3),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (!formKey.currentState!.validate()) {
                     return;
                   }
                   final student = StudentModel(
                     name: nameController.text,
                     age: int.parse(ageController.text),
-                    batch: batchController.value!.name,
+                    batch: batchController.value!,
                     phoneNo: int.parse(numberController.text),
                     email: emailController.text,
                   );
+                  await showDialog(
+                    context: context,
+                    builder: (ctx) {
+                      return CustomAlertDialogue(
+                        title: const Text('Edit Student'),
+                        content: const Text(
+                            'Are you sure you want to keep the changes?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              studentProvider.editStudent(index, student);
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text(
+                              'Yes',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
 
-                  studentProvider.addStudent(student);
                   Navigator.of(context).pop();
                 },
                 child: const Text(
                   "Save",
                   style: TextStyle(
                     fontSize: 18,
-                    color: Colors.grey,
+                    color: Colors.white,
                   ),
                 ),
               ),
