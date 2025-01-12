@@ -223,6 +223,7 @@ class HomeScreen extends StatelessWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (ctx) => StudentDetails(
+                                  profile: student.profileImagePath,
                                   name: student.name,
                                   batch: student.batch,
                                   age: student.age,

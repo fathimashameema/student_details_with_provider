@@ -41,6 +41,8 @@
 //     notifyListeners();
 //   }
 // }
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:student_details/models/student_model.dart';
@@ -52,13 +54,24 @@ class StudentProvider extends ChangeNotifier {
   List<StudentModel> filteredStudents = [];
   List<StudentModel> get students => _students;
   bool isLoading = false;
+  File? _selectedImage;
+  File? get selectedImage => _selectedImage;
+
+  void setImage(File? image) {
+    _selectedImage = image;
+    print('image is set');
+    notifyListeners();
+  }
+
+  void clearImage() {
+    _selectedImage = null;
+    notifyListeners();
+  }
 
   StudentProvider() {
-    // Fetch students when the provider is initialized
     getStudent();
   }
 
-  /// Opens the Hive box if it is not already open
   Future<void> openBox() async {
     try {
       if (_studentModelBox == null || !_studentModelBox!.isOpen) {

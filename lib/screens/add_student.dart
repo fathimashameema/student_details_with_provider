@@ -1,5 +1,9 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:student_details/functions/student_provider.dart';
 import 'package:student_details/models/batch.dart';
@@ -16,9 +20,19 @@ class AddStudent extends StatelessWidget {
     final batchController = SingleSelectController<String>(batches[0]);
     final numberController = TextEditingController();
     final emailController = TextEditingController();
-    final studentProvider =
-        Provider.of<StudentProvider>(context, listen: false);
+    final studentProvider = Provider.of<StudentProvider>(context);
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+    
+
+
+    Future<void> pickImage() async {
+      final returnImage =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (returnImage != null) {
+        studentProvider.setImage(File(returnImage.path));
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -30,9 +44,19 @@ class AddStudent extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              const CircleAvatar(
-                radius: 80,
-                backgroundColor: Colors.grey,
+              GestureDetector(
+                onTap: () {
+                  pickImage();
+                },
+                child: CircleAvatar(
+                  radius: 80,
+                  backgroundColor: Colors.grey,
+                  backgroundImage: studentProvider.selectedImage != null
+                      ? FileImage(File(studentProvider.selectedImage!.path))
+                      : const AssetImage(
+                              'assets/images/avatar-3814049_1280.webp')
+                          as ImageProvider,
+                ),
               ),
               const SizedBox(height: 30),
               CustomTextFormField(
@@ -70,7 +94,7 @@ class AddStudent extends StatelessWidget {
               ),
               CustomTextFormField(
                 controller: numberController,
-                keyboardType: TextInputType.phone,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                keyboardType: TextInputType.phone,
                 hintText: 'Phone Number',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -102,23 +126,30 @@ class AddStudent extends StatelessWidget {
                     Colors.grey.withOpacity(0.3),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (!formKey.currentState!.validate()) {
                     return;
                   }
+                  Uint8List? imageBytes;
+                  if (studentProvider.selectedImage != null) {
+                    imageBytes =
+                        await studentProvider.selectedImage!.readAsBytes();
+                  }
+                  print(imageBytes);
                   final student = StudentModel(
-                    name: nameController.text,
-                    age: int.parse(ageController.text),
-                    batch: batchController.value!,
-                    phoneNo: int.parse(numberController.text),
-                    email: emailController.text,
-                  );
+                      name: nameController.text,
+                      age: int.parse(ageController.text),
+                      batch: batchController.value!,
+                      phoneNo: int.parse(numberController.text),
+                      email: emailController.text,
+                      profileImagePath: imageBytes);
+                  // print(student.profileImagePath);
 
                   studentProvider.addStudent(student);
+                  studentProvider.clearImage(); // Clear image after saving
+
                   Navigator.of(context).pop();
                 },
-
-                
                 child: const Text(
                   "Save",
                   style: TextStyle(

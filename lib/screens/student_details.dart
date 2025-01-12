@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 class StudentDetails extends StatelessWidget {
+  final Uint8List? profile;
   final String name;
   final int age;
   final int phoneNo;
@@ -12,7 +15,8 @@ class StudentDetails extends StatelessWidget {
       required this.age,
       required this.phoneNo,
       required this.email,
-      required this.batch});
+      required this.batch,
+      required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +35,14 @@ class StudentDetails extends StatelessWidget {
               top: 150,
               child: Column(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.grey,
+                    backgroundImage: profile != null
+                        ? MemoryImage(profile!)
+                        : const AssetImage(
+                                'assets/images/avatar-3814049_1280.webp')
+                            as ImageProvider,
                   ),
                   const SizedBox(
                     height: 10,

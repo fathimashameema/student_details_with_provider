@@ -1,5 +1,9 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:student_details/functions/student_provider.dart';
 import 'package:student_details/models/batch.dart';
@@ -8,6 +12,7 @@ import 'package:student_details/widgets/custom_alert_dialogue.dart';
 import 'package:student_details/widgets/custom_text_form_field.dart';
 
 class EditStudent extends StatelessWidget {
+  final Uint8List? profile;
   final int index;
   final String name;
   final int age;
@@ -21,7 +26,8 @@ class EditStudent extends StatelessWidget {
       required this.email,
       required this.number,
       required this.batch,
-      required this.index});
+      required this.index,
+      this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +36,16 @@ class EditStudent extends StatelessWidget {
     final batchController = SingleSelectController<String>(batch);
     final numberController = TextEditingController(text: number.toString());
     final emailController = TextEditingController(text: email);
-    final studentProvider =
-        Provider.of<StudentProvider>(context, listen: false);
+    final studentProvider = Provider.of<StudentProvider>(context);
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+    Future<void> pickImage() async {
+      final returnImage =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (returnImage != null) {
+        studentProvider.setImage(File(returnImage.path));
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -44,9 +57,21 @@ class EditStudent extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              const CircleAvatar(
-                radius: 80,
-                backgroundColor: Colors.grey,
+              GestureDetector(
+                onTap: () {
+                  pickImage();
+                },
+                child: CircleAvatar(
+                  radius: 80,
+                  backgroundColor: Colors.grey,
+                  backgroundImage: studentProvider.selectedImage != null
+                      ? FileImage(studentProvider.selectedImage!)
+                      : (profile != null
+                          ? MemoryImage(profile!)
+                          : const AssetImage(
+                                  'assets/images/avatar-3814049_1280.webp')
+                              as ImageProvider),
+                ),
               ),
               const SizedBox(height: 30),
               CustomTextFormField(
@@ -120,12 +145,19 @@ class EditStudent extends StatelessWidget {
                   if (!formKey.currentState!.validate()) {
                     return;
                   }
+
+                  Uint8List? imageBytes;
+                  if (studentProvider.selectedImage != null) {
+                    imageBytes =
+                        await studentProvider.selectedImage!.readAsBytes();
+                  }
                   final student = StudentModel(
                     name: nameController.text,
                     age: int.parse(ageController.text),
                     batch: batchController.value!,
                     phoneNo: int.parse(numberController.text),
                     email: emailController.text,
+                    profileImagePath: imageBytes,
                   );
                   await showDialog(
                     context: context,
@@ -151,6 +183,9 @@ class EditStudent extends StatelessWidget {
                           TextButton(
                             onPressed: () {
                               studentProvider.editStudent(index, student);
+                              studentProvider
+                                  .clearImage(); // Clear image after saving
+
                               Navigator.of(context).pop();
                             },
                             child: const Text(

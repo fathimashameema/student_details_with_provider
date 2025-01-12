@@ -23,7 +23,8 @@ class StudentModelAdapter extends TypeAdapter<StudentModel> {
       email: fields[3] as String,
       phoneNo: fields[2] as int,
       id: fields[6] as int?,
-    )..profileImagePath = fields[5] as String?;
+      profileImagePath: fields[5] as Uint8List?,
+    );
   }
 
   @override

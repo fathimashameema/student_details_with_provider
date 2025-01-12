@@ -27,9 +27,13 @@ class StudentCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 24,
-                backgroundImage: AssetImage('assets/images/6o6z8a.jpg'),
+                backgroundImage: student.profileImagePath != null
+                    ? MemoryImage(student.profileImagePath!)
+                    : const AssetImage('assets/images/avatar-3814049_1280.webp')
+                        as ImageProvider,
+
                 // borderRadius: BorderRadius.horizontal(left: Radius.circular(15)),
               ),
               const SizedBox(
@@ -48,6 +52,7 @@ class StudentCard extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (ctx) => EditStudent(
+                          profile: student.profileImagePath,
                           name: student.name,
                           age: student.age,
                           email: student.email,
